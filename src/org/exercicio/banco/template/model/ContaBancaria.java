@@ -4,9 +4,9 @@ import java.util.Objects;
 
 /**
 *
-* Nome:
-* Curso:
-* Matrícula:
+* Nome:Flávio Lucas Gomes da Silva 
+* Curso: TSI 
+* Matrícula: ??????????
 * 
 */
 public class ContaBancaria {
@@ -127,21 +127,32 @@ public class ContaBancaria {
 		return status;
 	}
 
-	/**
-	 * Implemente o mehtodo hashCode
-	 */
 	@Override
 	public int hashCode() {
-		return 0;
+		return Objects.hash(numeroConta, saldo, status, titular);
 	}
 
-	/**
-	 * Implemente o mehtodo equals
-	 */
 	@Override
 	public boolean equals(Object obj) {
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ContaBancaria other = (ContaBancaria) obj;
+		return numeroConta == other.numeroConta
+				&& Double.doubleToLongBits(saldo) == Double.doubleToLongBits(other.saldo) && status == other.status
+				&& Objects.equals(titular, other.titular);
+	}
+
+	@Override
+	public String toString() {
+		return "ContaBancaria [numeroConta=" + numeroConta + ", saldo=" + saldo + ", titular=" + titular + ", status="
+				+ status + "]";
 	}
 	
 	
 }
+
+
