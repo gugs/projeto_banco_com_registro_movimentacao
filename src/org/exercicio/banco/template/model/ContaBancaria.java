@@ -1,6 +1,10 @@
 package org.exercicio.banco.template.model;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
+
+import org.exercicio.banco.template.model.enumerator.TipoTransacao;
 
 /**
 *
@@ -14,6 +18,7 @@ public class ContaBancaria {
 	private double saldo;
 	private String titular;
 	private boolean status;
+	private ArrayList<RegistroTransacao> transacoes;
 
 	/**
 	 * Construtor recebe apenas numeroConta e titular. Saldo e status iniciam
@@ -25,6 +30,7 @@ public class ContaBancaria {
 		this.numeroConta = numeroConta;
 		this.saldo = saldo;
 		this.status = true;
+		transacoes = new ArrayList<>();
 	}
 	
 	public ContaBancaria(int numeroConta, String titular) {
@@ -32,6 +38,7 @@ public class ContaBancaria {
 		this.titular = titular;
 		this.saldo = 0;
 		this.status = true;
+		transacoes = new ArrayList<>();
 	}
 
 	/*
@@ -58,6 +65,7 @@ public class ContaBancaria {
             System.out.print("Valor invalido para deposito.");
         } else {
             this.saldo += valor;
+            transacoes.add(new RegistroTransacao(LocalDateTime.now(), valor, TipoTransacao.DEPOSITO));
         }
 	}
 
@@ -86,6 +94,7 @@ public class ContaBancaria {
             } 	else {
             	
                 this.saldo -= valor;
+                transacoes.add(new RegistroTransacao(LocalDateTime.now(), valor, TipoTransacao.SAQUE));
             }
         } 			else {
             				System.out.print("Conta inativa.");
@@ -152,8 +161,10 @@ public class ContaBancaria {
 			
             if (quantia < this.saldo) {
             	
-                this.sacar(quantia);
-                destino.depositar(quantia);
+                saldo -= quantia;
+                destino.setSaldo(destino.getSaldo()+quantia);
+                transacoes.add(new RegistroTransacao(LocalDateTime.now(), quantia, TipoTransacao.TRANSFERENCIA_DEBITADO));
+                destino.transacoes.add(new RegistroTransacao(LocalDateTime.now(), quantia, TipoTransacao.TRANSFERENCIA_CREDITADO));
             } else {
             	
                 System.out.print("Saldo insuficiente para transferencia.");
@@ -166,11 +177,27 @@ public class ContaBancaria {
             System.out.print("Conta de destino inativa.");
         }
 	}
+	
+	public void imprimirExtrato(int mes, int ano) {
+		double saldoExtrato = 0;
+		for(RegistroTransacao rt : transacoes) {
+			if(rt.getDataTransacao().getMonth().getValue() == mes && rt.getDataTransacao().getYear() == ano) {
+				saldoExtrato += rt.getValor();
+				System.out.println(rt);
+			}
+		}
+		System.out.println("Impressão do saldo referente ao extrato: "+saldoExtrato);
+	}
 
 	public int getNumeroConta() {
 		return numeroConta;
 	}
 
+	
+	public void setSaldo(double saldo) {
+		this.saldo = saldo;
+	}
+	
 	public void setNumeroConta(int numeroConta) {
 		this.numeroConta = numeroConta;
 	}
